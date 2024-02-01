@@ -2,17 +2,23 @@ import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import createHttpError from 'http-errors';
-import passport from 'passport';
 
 import connectToDB from './configs/database';
 import envConfig from './configs/env';
+import routes from './routes';
+import { IUserDecode } from './types/auth';
+
+declare global {
+  namespace Express {
+    interface Request {
+      userDecode: IUserDecode;
+    }
+  }
+}
 
 const app = express();
 
 app.use(express.json({ limit: '100mb', type: 'application/json' }));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use(
   cors({
@@ -25,9 +31,9 @@ app.use(morgan('tiny'));
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static('uploads'));
-
 connectToDB();
+
+app.use('/api/v1', routes());
 
 app.use((_, res, next) => {
   res.status(404);
