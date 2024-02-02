@@ -2,6 +2,8 @@ import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import createHttpError from 'http-errors';
+import cookieSession from 'express-session';
+import passport from 'passport';
 
 import connectToDB from './configs/database';
 import envConfig from './configs/env';
@@ -18,8 +20,6 @@ declare global {
 
 const app = express();
 
-app.use(express.json({ limit: '100mb', type: 'application/json' }));
-
 app.use(
   cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -27,6 +27,19 @@ app.use(
     credentials: true,
   }),
 );
+
+app.use(
+  cookieSession({
+    name: 'session',
+    secret: 'secret',
+  }),
+);
+
+app.use(express.json({ limit: '100mb', type: 'application/json' }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(morgan('tiny'));
 
 app.use(express.urlencoded({ extended: true }));

@@ -4,10 +4,11 @@ import { compare, genSaltSync, hashSync } from 'bcrypt';
 import UserSchema from '../models/User';
 import handleResponse from '../configs/response';
 import { signInValidation, signUpValidation } from '../validations/auth';
-import { ISignIn, ISignUp, IUserDecode } from '../types/auth';
+import { IGoogleData, ISignIn, ISignUp, IUserDecode } from '../types/auth';
 import { EMongoDBCodeError } from '../constants/enum';
 import { signAccessToken, signRefreshToken } from '../configs/jwt';
 import { ERole } from '../constants/role';
+import { Profile } from 'passport-google-oauth20';
 
 class AuthController {
   async signUp(req: Request, res: Response) {
@@ -138,6 +139,20 @@ class AuthController {
     } catch (error) {
       return handleResponse.error(res);
     }
+  }
+
+  async signInGoogleSucccess(req: Request, res: Response) {
+    const user = req.user as Profile;
+
+    if (user) {
+      const _user: IGoogleData = JSON.parse(user._raw);
+
+      console.log(_user);
+
+      return res.json('Hello');
+    }
+
+    return handleResponse.unauthorized(res);
   }
 
   async getMe(req: Request, res: Response) {

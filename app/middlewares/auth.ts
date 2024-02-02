@@ -31,7 +31,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction) => 
 
       // Other Jwt error
       next(
-        res.send({
+        res.status(400).send({
           name: err.name,
           message: err.message,
         }),

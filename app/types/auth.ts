@@ -20,6 +20,12 @@ export interface ISignIn {
   password: string;
 }
 
+export interface IGoogleData {
+  name?: string;
+  email?: string;
+  picture?: string;
+}
+
 export interface IUserDecode {
   id: string;
   role: ERole;
